@@ -5,7 +5,6 @@ alert(
   "Este es un juego de cartas al estilo de YU-GI-OH.\n Los Life Points (LP) de cada uno son de 5000.\nTú tendrás 3 cartas monstruo al igual que tu adversario."
 );
 /////////cartas del adversario//////
-
 let card_Ad1_Atk = 2000;
 let card_Ad1_Def = 2100;
 let card_Ad1_Pos = "ATK";
