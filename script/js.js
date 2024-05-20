@@ -210,7 +210,8 @@ const myCards = [
     type: "magic",
     effect: "incrementa 1000 a tus LP ",
     magic: function () {
-      alert("es mi carta magia");
+      MyLifeP += 1000;
+      alert("tus L.P. son" + MyLifeP);
     },
   },
   {
@@ -219,7 +220,8 @@ const myCards = [
     type: "magic",
     effect: "Resta 1000 a los LP de tu adversario",
     magic: function () {
-      alert("es mi carta magia");
+      adversaryLifeP -= 1000;
+      alert(`los L.p. de tu adversario son ${adversaryLifeP}`);
     },
   },
 ];
@@ -262,13 +264,13 @@ function filterCard(array) {
   stringVacio = "";
   for (let i = 0; i < show.length; i++) {
     if (show[i].type != "magic") {
-      stringVacio += `\n${i + 1} - (${show[i].type}) su atk es de ${
+      stringVacio += `\n${i + 1} - (${show[i].type}) ${show[i].name} atk ${
         show[i].atk
       } y su def es de ${show[i].def}`;
     } else {
-      stringVacio += `\n${i + 1} - (${show[i].type}) su efecto es ${
-        show[i].effect
-      }`;
+      stringVacio += `\n${i + 1} - (${show[i].type}) ${
+        show[i].name
+      } su efecto es ${show[i].effect}`;
     }
   }
 
@@ -279,50 +281,65 @@ filterCard(copyMy);
 let verificacion = "";
 let verificacion2 = "";
 
-function activeCard(myArray, opcion, arrayAdv, target) {
+function activeCard(myArray, opcion, arrayAdv) {
   let card = filterCard(myArray)[opcion - 1];
   console.log(opcion);
   console.log(card);
 
   if (card.type == "magic") {
     card.magic();
+    card.active = false;
+    console.log(card);
   } else {
-    alert("monstruo");
+    console.log(card);
+    filterCard(copyAdv);
+
+    let target =
+      filterCard(arrayAdv)[
+        parseInt(
+          prompt("\n Selecione la carta que quiere atacar" + stringVacio)
+        ) - 1
+      ];
+    console.log(target);
     let pos = prompt(
       "Elegir la postura si queres que sea de atk o de def. si deseas atk va a atacar al adversario\nDe ser carta magia ignora este mensaje"
     );
 
-    if (card.type == "monster" && myArray == copyMy) {
-      card.pos = pos;
-    }
+    card.pos = pos;
+
     if (
       pos === "atk" &&
-      arrayAdv[target - 1].pos === "atk" &&
-      myArray[opcion - 1].atk > arrayAdv[target - 1].atk
+      target.pos === "atk" &&
+      myArray[opcion - 1].atk > target.atk
     ) {
-      verificacion = myArray[opcion - 1].atk - arrayAdv[target - 1].atk;
+      verificacion = myArray[opcion - 1].atk - target.atk;
+      console.log(verificacion);
+      console.log(target);
 
       adversaryLifeP = adversaryLifeP - verificacion;
+      target.active = false;
       alert("ganaste los L.P de tu enemigo ahora es de " + adversaryLifeP);
 
       console.log(myArray[opcion - 1].atk);
-    } else if (arrayAdv[target - 1].pos === "def") {
+    } else if (target.pos === "def") {
       alert("la carta del adversario esta en defensa");
+      target.active = false;
     } else if (
       pos === "atk" &&
-      arrayAdv[target - 1].pos === "atk" &&
-      myArray[opcion - 1].atk < arrayAdv[target - 1].atk
+      target.pos === "atk" &&
+      myArray[opcion - 1].atk < target.atk
     ) {
-      verificacion2 = arrayAdv[target - 1].atk - myArray[opcion - 1].atk;
+      verificacion2 = target.atk - myArray[opcion - 1].atk;
 
       MyLifeP = MyLifeP - verificacion2;
-
+      target.active = false;
       alert("perdiste tus L.P son de " + MyLifeP);
-    } else if (pos === "atk" && arrayAdv[target - 1].type === "magic") {
+    } else if (pos === "atk" && target.type === "magic") {
       alert("no podes atacar a cartas magias");
     } else {
       alert("hubo un error, volve a intentarlo");
     }
+    card.active = false;
   }
   // if (card.type == "magic" && array == copyMy && array[e - 1].id == 11) {
   //   alert("es carta magia");
@@ -355,17 +372,15 @@ function activeCard(myArray, opcion, arrayAdv, target) {
 //   activeCard(copyMy, opcion, copyAdv, opcionAdv);
 // }
 
-while (adversaryLifeP >= 0 && MyLifeP >= 0) {
+while (adversaryLifeP > 1 && MyLifeP > 1 && copyMy.length > 1) {
   filterCard(copyMy);
-  let opcion = parseInt(
-    prompt(
-      stringVacio + "\n Selecione la opcion con el numero correspondiente "
-    )
-  );
+  let opcion = parseInt(prompt("Seleciona tu carta \n" + stringVacio));
+  activeCard(copyMy, opcion, copyAdv);
+}
 
-  filterCard(copyAdv);
-  let opcionAdv = parseInt(
-    prompt("\n Selecione la carta que quiere atacar" + stringVacio)
+if (adversaryLifeP < 1 || MyLifeP < 1 || copyMy.length === 0) {
+  console.log("alert");
+  alert(
+    `termino la partida los LP de cada uno son ${MyLifeP} ${adversaryLifeP}`
   );
-  activeCard(copyMy, opcion, copyAdv, opcionAdv);
 }
