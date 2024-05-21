@@ -297,9 +297,10 @@ function activeCard(myArray, opcion, arrayAdv) {
     let target =
       filterCard(arrayAdv)[
         parseInt(
-          prompt("\n Selecione la carta que quiere atacar" + stringVacio)
+          prompt("Selecione la carta que quiere atacar \n" + stringVacio)
         ) - 1
       ];
+
     console.log(target);
     let pos = prompt(
       "Elegir la postura si queres que sea de atk o de def. si deseas atk va a atacar al adversario\nDe ser carta magia ignora este mensaje"
@@ -307,12 +308,8 @@ function activeCard(myArray, opcion, arrayAdv) {
 
     card.pos = pos;
 
-    if (
-      pos === "atk" &&
-      target.pos === "atk" &&
-      myArray[opcion - 1].atk > target.atk
-    ) {
-      verificacion = myArray[opcion - 1].atk - target.atk;
+    if (pos === "atk" && target.pos === "atk" && card.atk > target.atk) {
+      verificacion = card.atk - target.atk;
       console.log(verificacion);
       console.log(target);
 
@@ -320,24 +317,22 @@ function activeCard(myArray, opcion, arrayAdv) {
       target.active = false;
       alert("ganaste los L.P de tu enemigo ahora es de " + adversaryLifeP);
 
-      console.log(myArray[opcion - 1].atk);
+      console.log(card.atk);
     } else if (target.pos === "def") {
       alert("la carta del adversario esta en defensa");
       target.active = false;
-    } else if (
-      pos === "atk" &&
-      target.pos === "atk" &&
-      myArray[opcion - 1].atk < target.atk
-    ) {
-      verificacion2 = target.atk - myArray[opcion - 1].atk;
+    } else if (pos === "atk" && target.pos === "atk" && card.atk < target.atk) {
+      verificacion2 = target.atk - card.atk;
 
       MyLifeP = MyLifeP - verificacion2;
       target.active = false;
       alert("perdiste tus L.P son de " + MyLifeP);
     } else if (pos === "atk" && target.type === "magic") {
       alert("no podes atacar a cartas magias");
-    } else {
-      alert("hubo un error, volve a intentarlo");
+    } else if (pos === "atk" && target.pos === "atk") {
+      card.atk === target.atk;
+      target.active = false;
+      alert("empataron");
     }
     card.active = false;
   }
@@ -372,15 +367,29 @@ function activeCard(myArray, opcion, arrayAdv) {
 //   activeCard(copyMy, opcion, copyAdv, opcionAdv);
 // }
 
-while (adversaryLifeP > 1 && MyLifeP > 1 && copyMy.length > 1) {
-  filterCard(copyMy);
-  let opcion = parseInt(prompt("Seleciona tu carta \n" + stringVacio));
-  activeCard(copyMy, opcion, copyAdv);
-}
+// while (adversaryLifeP > 1 && MyLifeP > 1 && copyMy.length > 0) {
+//   filterCard(copyMy);
+//   let opcion = parseInt(prompt("Seleciona tu carta \n" + stringVacio));
+//   activeCard(copyMy, opcion, copyAdv);
+// }
 
-if (adversaryLifeP < 1 || MyLifeP < 1 || copyMy.length === 0) {
-  console.log("alert");
-  alert(
-    `termino la partida los LP de cada uno son ${MyLifeP} ${adversaryLifeP}`
-  );
-}
+// if (adversaryLifeP < 1 || MyLifeP < 1 || copyMy.length === 0) {
+//   console.log("alert");
+//   alert(
+//     `termino la partida los LP de cada uno son ${MyLifeP} ${adversaryLifeP}`
+//   );
+// }
+
+do {
+  if (adversaryLifeP < 1 || MyLifeP < 1 || filterCard(copyMy).length === 0) {
+    console.log("alert");
+    alert(
+      `termino la partida los LP de cada uno son ${MyLifeP} ${adversaryLifeP}`
+    );
+    break;
+  } else {
+    filterCard(copyMy);
+    let opcion = parseInt(prompt("Seleciona tu carta \n" + stringVacio));
+    activeCard(copyMy, opcion, copyAdv);
+  }
+} while (adversaryLifeP > 1 && MyLifeP > 1 && copyMy.length > 0);
