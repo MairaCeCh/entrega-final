@@ -13,27 +13,26 @@
     <title>Document</title>
   </head>
   <body>
-    <div class="container bg-dark">
+    <div class="container bg-warnig">
+      <div>
+        <h1>Quien juega?</h1>
+        <input id="inputData" type="text" placeholder="Coloca tu nombre" />
+        <button id="saveButton">Guardar</button>
+      </div>
       <div id="titulo"></div>
       <div class="row bg-danger">
         <div class="col-10 bg-primary">
-          <div class="row">
-            <div id="card-row-ad" class="row">
-              <h2>Las cartas del oponente son:</h2>
-            </div>
-          </div>
-          <div class="row">
-            <div id="card-row" class="row">
-              <h2>Tus cartas son:</h2>
-            </div>
-          </div>
+          <h2 id="resultado">Resultado de la batalla</h2>
+          <h2>Las cartas del oponente son:</h2>
+          <div class="row" id="card-row-ad"></div>
+          <div id="card-row" class="row"><h2>Tus cartas son:</h2></div>
         </div>
         <div class="col-2 bg-warnig">
           <div id="life-pointAd">Life Point Adversario:</div>
-          <p id="ataquesAdv">elegiste a (Adversario)</p>
-          <button class="btn btn-primary col-4">Atacar</button>
-          <p id="ataques">elegiste a (tuyo)</p>
-          <div id="life-point">Tus Life Point:</div>
+          <p id="selectCardAdv">elegiste a (Adversario)</p>
+          <button id="btn_atacar" class="btn btn-primary col-4">Atacar</button>
+          <p id="selectCard">elegiste a (tuyo)</p>
+          <div id="life-point"></div>
         </div>
       </div>
     </div>

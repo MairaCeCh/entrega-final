@@ -1,8 +1,12 @@
 const titulo = document.getElementById("titulo");
 const lifeP = document.getElementById("life-point");
 const lifePAdv = document.getElementById("life-pointAd");
-const ataquesAdv = document.getElementById("ataquesAdv");
-const ataques = document.getElementById("ataques");
+const selectCardAdv = document.getElementById("selectCardAdv");
+const selectCard = document.getElementById("selectCard");
+const btn_atacar = document.getElementById("btn_atacar");
+const resultado = document.getElementById("resultado");
+
+const saveButton = document.getElementById("saveButton");
 
 const cardsAd = document.getElementById("card-row-ad");
 const cards = document.getElementById("card-row");
@@ -11,6 +15,12 @@ const cards = document.getElementById("card-row");
 
 let MyLifeP = 5000;
 let adversaryLifeP = 5000;
+
+let chosenCard = null;
+let chosenCardAdv = null;
+let verificacion = "";
+let verificacion2 = "";
+let nombre = "";
 const adversaryCards = [
   {
     id: 1,
@@ -241,6 +251,7 @@ const myCards = [
       MyLifeP += 1000;
       alert("tus L.P. son" + MyLifeP);
     },
+    pos: null,
   },
   {
     id: 12,
@@ -252,6 +263,7 @@ const myCards = [
       adversaryLifeP -= 1000;
       alert(`los L.p. de tu adversario son ${adversaryLifeP}`);
     },
+    pos: null,
   },
 ];
 
@@ -272,254 +284,234 @@ function shuffle(array) {
 const copyAdv = shuffle(adversaryCards).slice(0, 5);
 let copyMy = shuffle(myCards).slice(0, 5);
 
-/////fin mezclar/////
-
-//////mostrar cartas/////
-// alert(
-//   "te mostraremos tus cartas y las cartas de tu adversario... deberas colocar primero el numero de tu carta con la que quieras jugar y luego la carta de tu enemigo."
-// );
-// let string = "Tus cartas son ";
-
-// let stringVacio = "";
-
 function filterCard(array) {
   const show = array.filter((card) => card.active === true);
 
-  // console.log("las cactivas son ", show);
-
   stringVacio = "";
   for (let i = 0; i < show.length; i++) {
-    if (show[i].type != "magic") {
-      stringVacio += `\n${i + 1} - (${show[i].type}) ${show[i].name} atk ${
-        show[i].atk
-      } y su def es de ${show[i].def}`;
-    } else {
-      stringVacio += `\n${i + 1} - (${show[i].type}) ${
-        show[i].name
-      } su efecto es ${show[i].effect}`;
-    }
+    // if (show[i].type != "magic") {
+    //   stringVacio += `\n${i + 1} - (${show[i].type}) ${show[i].name} atk ${
+    //     show[i].atk
+    //   } y su def es de ${show[i].def}`;
+    // } else {
+    //   stringVacio += `\n${i + 1} - (${show[i].type}) ${
+    //     show[i].name
+    //   } su efecto es ${show[i].effect}`;
+    // }
+    stringVacio +=
+      show[i].type != "magic"
+        ? `\n${i + 1} - (${show[i].type}) ${show[i].name} atk ${
+            show[i].atk
+          } y su def es de ${show[i].def}`
+        : `\n${i + 1} - (${show[i].type}) ${show[i].name} su efecto es ${
+            show[i].effect
+          }`;
   }
 
   return show;
 }
 filterCard(copyMy);
 
-let verificacion = "";
-let verificacion2 = "";
-
-function activeCard(myArray, opcion, arrayAdv) {
-  let card = filterCard(myArray)[opcion - 1];
-  console.log(opcion);
-  console.log(card);
-
-  if (card.type == "magic") {
-    card.magic();
-    card.active = false;
-    console.log(card);
-  } else {
-    console.log(card);
-    filterCard(copyAdv);
-
-    let target =
-      filterCard(arrayAdv)[
-        parseInt(
-          prompt("Selecione la carta que quiere atacar \n" + stringVacio)
-        ) - 1
-      ];
-
-    // console.log(target);
-    let pos = prompt(
-      "Elegir la postura si queres que sea de atk o de def. si deseas atk va a atacar al adversario\nDe ser carta magia ignora este mensaje"
-    );
-
-    card.pos = pos;
-
-    if (pos === "atk" && target.pos === "atk" && card.atk > target.atk) {
-      verificacion = card.atk - target.atk;
-      console.log(verificacion);
-      console.log(target);
-
-      adversaryLifeP = adversaryLifeP - verificacion;
-      target.active = false;
-      alert("ganaste los L.P de tu enemigo ahora es de " + adversaryLifeP);
-
-      console.log(card.atk);
-    } else if (target.pos === "def") {
-      alert("la carta del adversario esta en defensa");
-      target.active = false;
-    } else if (pos === "atk" && target.pos === "atk" && card.atk < target.atk) {
-      verificacion2 = target.atk - card.atk;
-
-      MyLifeP = MyLifeP - verificacion2;
-      target.active = false;
-      alert("perdiste tus L.P son de " + MyLifeP);
-    } else if (pos === "atk" && target.type === "magic") {
-      alert("no podes atacar a cartas magias");
-    } else if (pos === "atk" && target.pos === "atk") {
-      card.atk === target.atk;
-      target.active = false;
-      alert("empataron");
-    }
-    card.active = false;
-  }
-}
-
-// do {
-//   if (adversaryLifeP < 1 || MyLifeP < 1 || filterCard(copyMy).length === 0) {
-//     console.log("alert");
-//     alert(
-//       `termino la partida los LP de cada uno son ${MyLifeP} ${adversaryLifeP}`
-//     );
-//     break;
-//   } else {
-//     filterCard(copyMy);
-//     let opcion = parseInt(prompt("Seleciona tu carta \n" + stringVacio));
-//     activeCard(copyMy, opcion, copyAdv);
-//   }
-// } while (adversaryLifeP > 1 && MyLifeP > 1 && copyMy.length > 0);
-
 let principal = document.createElement("div");
 principal.innerHTML = `<h2> Juego de cartas</h2> <p>Este es un juego de cartas al estilo de YU-GI-OH. Los Life Points (LP) de cada uno son de 5000. Tú tendrás 3 cartas monstruo al igual que tu adversario.</p>`;
 titulo.append(principal);
 
-let point = document.createElement("div");
-point.innerHTML = `<p>${MyLifeP}</p>`;
-lifeP.append(point);
+let cardElementsAdv = []; // Array para almacenar todas las referencias a cardElementAdv
+
+function cardPosition(pos, card) {
+  card.pos = pos;
+}
+function showCardsAdv() {
+  cardsAd.innerHTML = "";
+  copyAdv.forEach((card) => {
+    if (card.type == "monster" && card.active == true) {
+      let cardElementAdv = document.createElement("div");
+      cardElementAdv.className = "col-2";
+      cardElementAdv.dataset.type = card.type;
+      cardElementAdv.innerHTML = ` 
+    <div id="${card.id}" class="card mb-4" >
+      <img src="${card.img}" class="card-img-top img" alt="${card.name}">
+      <div class="card-body">
+        <h5 class="card-title">${card.name}</h5>
+        <p class="card-text">ATK: ${card.atk}</p>
+        <p class="card-text">DEF: ${card.def}</p>
+        <div class="col-12">
+        <button id="elegir${card.id}" class="btn btn-primary w-100">elegir</button>
+      </div>
+      </div>
+    </div>
+  `;
+      cardsAd.append(cardElementAdv);
+      console.log(cardElementAdv.dataset);
+      cardElementsAdv.push(cardElementAdv);
+
+      let btnChosenAdv = document.getElementById(`elegir${card.id}`);
+      btnChosenAdv.addEventListener("click", () => {
+        chosenCardAdv = card;
+        console.log(chosenCard);
+        selectCardAdv.innerHTML = `<h5>${card.name}</h5>`;
+      });
+    } else if (card.type == "magic" && card.active == true) {
+      let cardElementAdv = document.createElement("div");
+      cardElementAdv.className = "col-2";
+      cardElementAdv.dataset.type = card.type;
+      cardElementAdv.innerHTML = ` 
+    <div id="${card.id}" class="card mb-4" >
+      <img src="${card.img}" class="card-img-top img" alt="${card.name}">
+      <h3>${card.type}</h3>
+      <div class="card-body">
+        <h5 class="card-title">${card.name}</h5>
+        <div class="col-12">
+        <button id="elegir${card.id}" class="btn btn-primary w-100">elegir</button>
+      </div>
+      </div>
+    </div>
+  `;
+      cardsAd.append(cardElementAdv);
+      console.log(cardElementAdv.dataset);
+      cardElementsAdv.push(cardElementAdv);
+
+      let btnChosenAdv = document.getElementById(`elegir${card.id}`);
+      btnChosenAdv.addEventListener("click", () => {
+        chosenCardAdv = card;
+        console.log(chosenCard);
+        selectCardAdv.innerHTML = `<h5>${card.name}</h5>`;
+      });
+    }
+  });
+}
+
+showCardsAdv();
+
+function showCards() {
+  cards.innerHTML = "";
+  copyMy.forEach((card) => {
+    if (card.type == "monster" && card.active == true) {
+      let cardElement = document.createElement("div");
+      cardElement.className = "col-2";
+
+      cardElement.innerHTML = `<div id="cardblue" class="card mb-4 blue">
+    <img src="${card.img}" class="card-img-top img" alt="${card.name}">
+    <div class="card-body">
+      <h5 class="card-title">${card.name}</h5>
+      <p class="card-text">ATK: ${card.atk}</p>
+      <p class="card-text">DEF: ${card.def}</p>
+      <div class="row">
+        <div class="col-md-6">  <button id="btnAtk${card.id}" class="btn btn-secondary w-100">atk</button> 
+        </div> 
+        <div class="col-md-6">    
+        <button id="btnDef${card.id}" class="btn btn-secondary w-100">def</button>
+      </div> 
+        <div class="col-12">
+          <button id="myCard${card.id}" class="btn btn-primary w-100">elegir</button>
+        </div>
+      </div>
+    </div>
+  </div>
+`;
+      cards.append(cardElement);
+
+      let btnAtk = document.getElementById(`btnAtk${card.id}`);
+      btnAtk.addEventListener("click", () => {
+        if (card.type == "monster") {
+          card.pos = "atk";
+          btnAtk.classList.add("btn-danger");
+          btnDef.classList.remove("btn-success");
+          console.log(copyMy);
+        }
+      });
+      let btnDef = document.getElementById(`btnDef${card.id}`);
+      btnDef.addEventListener("click", () => {
+        if (card.type == "monster") {
+          card.pos = "def";
+          btnAtk.classList.remove("btn-danger");
+          btnDef.classList.add("btn-success");
+          console.log(copyMy);
+        }
+      });
+      let btnChosen1 = document.getElementById(`myCard${card.id}`);
+      console.log(btnChosen1);
+      btnChosen1.addEventListener("click", () => {
+        chosenCard = card;
+
+        selectCard.innerHTML = `<h5>${card.name}</h5>`;
+      });
+    } else if (card.type == "magic" && card.active == true) {
+      let cardElement = document.createElement("div");
+      cardElement.className = "col-2";
+      cardElement.innerHTML = `
+    <div id="cardblue" class="card mb-4 blue" >
+      <img src="${card.img}" class="card-img-top img" alt="${card.name}">
+      <h3>${card.type}</h3>
+      <div class="card-body">
+        <h5 class="card-title">${card.name}</h5>
+        <div class="col-12">
+          <button id="myCard${card.id}" class="btn btn-primary w-100">elegir</button>
+        </div>
+      </div>
+    </div>
+  `;
+      cards.append(cardElement);
+      let btnChosen1 = document.getElementById(`myCard${card.id}`);
+      console.log(btnChosen1);
+      btnChosen1.addEventListener("click", () => {
+        chosenCard = card;
+
+        selectCard.innerHTML = `<h5>${card.name}</h5>`;
+      });
+    }
+  });
+}
+
+showCards();
+
+//////////
 
 let pointAdv = document.createElement("div");
 pointAdv.innerHTML = `<p>${adversaryLifeP}</p>`;
 lifePAdv.append(pointAdv);
 
-// let cardElementAdv = "";
-// copyAdv.forEach((card) => {
-//   cardElementAdv = document.createElement("div");
-//   cardElementAdv.className = "col-md-4";
-//   cardElementAdv.innerHTML = `
-//       <div id="${card.id}" class="card mb-4" style="width: 18rem;">
-//         <img src="${card.image}" class="card-img-top" alt="${card.name}">
-//         <div class="card-body">
-//           <h5 class="card-title">${card.name}</h5>
-//           <p class="card-text">ATK: ${card.atk}</p>
-//           <p class="card-text">DEF: ${card.def}</p>
-
-//         </div>
-//       </div>
-//     `;
-//   cardsAd.append(cardElementAdv);
-// });
-
-// copyMy.forEach((card) => {
-//   let cardElement = document.createElement("div");
-//   cardElement.className = "col-md-4";
-//   cardElement.innerHTML = `
-//     <div id="cardblue" class="card mb-4 blue" style="width: 18rem;">
-//       <img src="${card.image}" class="card-img-top" alt="${card.name}">
-//       <div class="card-body">
-//         <h5 class="card-title">${card.name}</h5>
-//         <p class="card-text">ATK: ${card.atk}</p>
-//         <p class="card-text">DEF: ${card.def}</p>
-//         <input type="text" id="input${card.id}" placeholder="elegir posición">
-//         <button id="button${card.id}" class="btn-c">Atacar</button>
-//       </div>
-//     </div>
-//   `;
-//   cards.append(cardElement);
-
-//   document
-//     .getElementById(`button${card.id}`)
-//     .addEventListener("click", function () {
-//       this.classList.toggle("red");
-//       let inputPos = document.getElementById(`input${card.id}`).value;
-
-//       localStorage.setItem(`cardPos${card.id}`, inputPos);
-
-//       card.pos = localStorage.getItem(`cardPos${card.id}`);
-
-//       cardElementAdv.classList.toggle("border-blue");
-//     });
-// });
-
-let cardElementsAdv = []; // Array para almacenar todas las referencias a cardElementAdv
-
-copyAdv.forEach((card) => {
-  let cardElementAdv = document.createElement("div");
-  cardElementAdv.className = "col-4";
-  cardElementAdv.dataset.type = card.type;
-  cardElementAdv.innerHTML =
-    card.type === "monster"
-      ? ` 
-    <div id="${card.id}" class="card mb-4" style="width: 18rem;">
-      <img src="${card.img}" class="card-img-top img" alt="${card.name}">
-      <div class="card-body">
-        <h5 class="card-title">${card.name}</h5>
-        <p class="card-text">ATK: ${card.atk}</p>
-        <p class="card-text">DEF: ${card.def}</p>
-      </div>
-    </div>
-  `
-      : ` 
-    <div id="${card.id}" class="card mb-4" style="width: 18rem;">
-      <img src="${card.img}" class="card-img-top img" alt="${card.name}">
-      <h3>${card.type}</h3>
-      <div class="card-body">
-        <h5 class="card-title">${card.name}</h5>
-      </div>
-    </div>
-  `;
-  cardsAd.append(cardElementAdv);
-  console.log(cardElementAdv.dataset);
-  cardElementsAdv.push(cardElementAdv); // Agregar cardElementAdv al array
+saveButton.addEventListener("click", () => {
+  const inputData = document.getElementById("inputData").value;
+  localStorage.setItem("inputData", inputData);
+  nombre = localStorage.getItem("inputData", inputData);
+  JSON.stringify(nombre);
+  lifeP.innerHTML = `Los Life Point de ${nombre}:<p>${MyLifeP}</p>`;
 });
 
-copyMy.forEach((card) => {
-  let cardElement = document.createElement("div");
-  cardElement.className = "col-4";
-  cardElement.innerHTML =
-    card.type === "monster"
-      ? `
-    <div id="cardblue" class="card mb-4 blue" style="width: 18rem;">
-      <img src="${card.img}" class="card-img-top img" alt="${card.name}">
-      <div class="card-body">
-        <h5 class="card-title">${card.name}</h5>
-        <p class="card-text">ATK: ${card.atk}</p>
-        <p class="card-text">DEF: ${card.def}</p>
-        <input type="text" id="input${card.id}" placeholder="elegir posición">
-        <button id="button${card.id}" class="btn-c">elegir</button>
-      </div>
-    </div>
-  `
-      : `
-    <div id="cardblue" class="card mb-4 blue" style="width: 18rem;">
-      <img src="${card.img}" class="card-img-top img" alt="${card.name}">
-      <h3>${card.type}</h3>
-      <div class="card-body">
-        <h5 class="card-title">${card.name}</h5>
-        <button id="button${card.id}" class="btn-c">Atacar</button>
-      </div>
-    </div>
-  `;
-  cards.append(cardElement);
+function atacar() {
+  if (chosenCard.pos == "atk") {
+    if (chosenCard.atk > chosenCardAdv.atk && adversaryLifeP > 0) {
+      resultado.innerHTML = `tu carta le gano a la carta del adversario`;
+      verificacion = chosenCard.atk - chosenCardAdv.atk;
+      adversaryLifeP = adversaryLifeP - verificacion;
+      pointAdv.innerHTML = `<p>${adversaryLifeP}</p>`;
+      lifePAdv.append(pointAdv);
+    } else if (chosenCard.atk < chosenCardAdv.atk && MyLifeP > 0) {
+      resultado.innerHTML = `tu carta no le gano a la carta del adversario`;
+      verificacion2 = chosenCardAdv.atk - chosenCard.atk;
+      MyLifeP = MyLifeP - verificacion2;
+      lifeP.innerHTML = `Los Life Point de ${nombre}:<p>${MyLifeP}</p>`;
+      console.log(verificacion2);
+      console.log(MyLifeP);
+    } else if (chosenCard.atk == chosenCardAdv.atk) {
+      resultado.innerHTML = `empataron`;
+    } else if (chosenCard.atk > chosenCardAdv.atk && adversaryLifeP < 0) {
+      resultado.innerHTML = `ya se termino el juego gano ${nombre}`;
+    } else if (chosenCard.atk < chosenCardAdv.atk && MyLifeP < 0) {
+      resultado.innerHTML = `ya se termino el juego gano el adversario`;
+    } else {
+      resultado.innerHTML = `tu carta esta en modo defensa`;
+    }
+    chosenCard.active = false;
+    chosenCardAdv.active = false;
+  } else {
+    resultado.innerHTML = `tu carta esta en modo defensa`;
+  }
+}
 
-  document
-    .getElementById(`button${card.id}`)
-    .addEventListener("click", function () {
-      this.classList.toggle("red");
-
-      let inputPosElement = document.getElementById(`input${card.id}`);
-      let inputPos = inputPosElement ? inputPosElement.value : null;
-
-      if (inputPos) {
-        localStorage.setItem(`cardPos${card.id}`, inputPos);
-        card.pos = localStorage.getItem(`cardPos${card.id}`);
-      }
-
-      // Iterar sobre el array y agregar la clase a todos los elementos
-      cardElementsAdv.forEach((element) => {
-        if (element.dataset.type === "monster") {
-          element.classList.toggle("border-blue");
-        }
-      });
-    });
+btn_atacar.addEventListener("click", () => {
+  atacar();
+  showCards();
+  showCardsAdv();
 });
-
-//
