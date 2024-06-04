@@ -289,7 +289,6 @@ function filterCard(array) {
 
   stringVacio = "";
   for (let i = 0; i < show.length; i++) {
-
     stringVacio +=
       show[i].type != "magic"
         ? `\n${i + 1} - (${show[i].type}) ${show[i].name} atk ${
@@ -375,9 +374,6 @@ function showCardsAdv() {
 
 showCardsAdv();
 
-
-
-
 function showCards() {
   cards.innerHTML = "";
   copyMy.forEach((card) => {
@@ -459,7 +455,6 @@ function showCards() {
 }
 
 showCards();
-
 
 let pointAdv = document.createElement("div");
 pointAdv.innerHTML = `<p>${adversaryLifeP}</p>`;
