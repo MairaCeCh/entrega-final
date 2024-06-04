@@ -289,15 +289,7 @@ function filterCard(array) {
 
   stringVacio = "";
   for (let i = 0; i < show.length; i++) {
-    // if (show[i].type != "magic") {
-    //   stringVacio += `\n${i + 1} - (${show[i].type}) ${show[i].name} atk ${
-    //     show[i].atk
-    //   } y su def es de ${show[i].def}`;
-    // } else {
-    //   stringVacio += `\n${i + 1} - (${show[i].type}) ${
-    //     show[i].name
-    //   } su efecto es ${show[i].effect}`;
-    // }
+
     stringVacio +=
       show[i].type != "magic"
         ? `\n${i + 1} - (${show[i].type}) ${show[i].name} atk ${
@@ -383,6 +375,9 @@ function showCardsAdv() {
 
 showCardsAdv();
 
+
+
+
 function showCards() {
   cards.innerHTML = "";
   copyMy.forEach((card) => {
@@ -465,7 +460,6 @@ function showCards() {
 
 showCards();
 
-//////////
 
 let pointAdv = document.createElement("div");
 pointAdv.innerHTML = `<p>${adversaryLifeP}</p>`;
