@@ -281,7 +281,7 @@ async function getApiCards() {
   }
 }
 
-async function filteredData() {
+async function showGame() {
   const cards = await getApiCards();
 
   const filteredCards = cards.filter(
@@ -295,7 +295,7 @@ async function filteredData() {
   // return cards;
 }
 
-filteredData();
+showGame();
 // Limitar a los primeros 10 elementos después de filtrar
 
 /////mezclar/////
