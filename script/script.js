@@ -4,7 +4,7 @@ const lifePAdv = document.getElementById("life-pointAd");
 const selectCardAdv = document.getElementById("selectCardAdv");
 const selectCard = document.getElementById("selectCard");
 const btn_atacar = document.getElementById("btn_atacar");
-const resultado = document.getElementById("resultado");
+// const resultado = document.getElementById("resultado");
 const salir = document.getElementById("salir");
 const container = document.querySelector(".container");
 const jugar = document.getElementById("jugar");
@@ -17,7 +17,7 @@ const cards = document.getElementById("card-row");
 
 let MyLifeP = 5000;
 let adversaryLifeP = 5000;
-
+let cardElementsAdv = [];
 let chosenCard = null;
 let chosenCardAdv = null;
 let verificacion = "";
@@ -281,8 +281,13 @@ async function getApiCards() {
   }
 }
 
-async function filteredData() {
+let copyAdv = [];
+let copyMy = [];
+
+async function showGame() {
   const cards = await getApiCards();
+
+  cards.forEach((card) => (card.active = null));
 
   const filteredCards = cards.filter(
     (carta) => carta.type !== "Spell Card" && carta.type !== "Trap Card"
@@ -292,10 +297,17 @@ async function filteredData() {
 
   console.log(myCards);
   console.log(adversaryCards);
-  // return cards;
+  copyAdv = shuffle(adversaryCards).slice(0, 5);
+  copyMy = shuffle(myCards).slice(0, 5);
+
+  console.log(copyMy);
+  console.log(copyAdv);
+
+  showCardsAdv(copyAdv);
+  showCards(copyMy);
 }
 
-filteredData();
+showGame();
 // Limitar a los primeros 10 elementos después de filtrar
 
 /////mezclar/////
@@ -312,37 +324,18 @@ function shuffle(array) {
   return shuffledCards;
 }
 
-const copyAdv = shuffle(adversaryCards).slice(0, 5);
-let copyMy = shuffle(myCards).slice(0, 5);
-
 function filterCard(array) {
   const show = array.filter((card) => card.active === true);
-
-  stringVacio = "";
-  for (let i = 0; i < show.length; i++) {
-    stringVacio +=
-      show[i].type != "magic"
-        ? `\n${i + 1} - (${show[i].type}) ${show[i].name} atk ${
-            show[i].atk
-          } y su def es de ${show[i].def}`
-        : `\n${i + 1} - (${show[i].type}) ${show[i].name} su efecto es ${
-            show[i].effect
-          }`;
-  }
-
   return show;
 }
-filterCard(copyMy);
-
-let cardElementsAdv = []; // Array para almacenar todas las referencias a cardElementAdv
 
 function cardPosition(pos, card) {
   card.pos = pos;
 }
-function showCardsAdv() {
+function showCardsAdv(copyAdv) {
   cardsAd.innerHTML = "";
   copyAdv.forEach((card) => {
-    if (card.type == "monster" && card.active == true) {
+    if (card.active == true) {
       let cardElementAdv = document.createElement("div");
       cardElementAdv.className = "col-2";
       cardElementAdv.dataset.type = card.type;
@@ -350,7 +343,7 @@ function showCardsAdv() {
       cardElementAdv.innerHTML = ` 
   <div id="${card.id}" class="card mb-4" style="width: 10rem;">
   <div class="aspect-ratio" style="aspect-ratio: 16/9;">
-      <img src="${card.img}" class="card-img-top img" alt="${card.name}">
+      <img src="${card.card_images[0].image_url_small}" class="card-img-top img" alt="${card.name}">
   </div>
   <div class="card-body d-flex flex-column justify-content-between">
       <h5 class="card-title">${card.name}</h5>
@@ -379,7 +372,7 @@ function showCardsAdv() {
       cardElementAdv.innerHTML = ` 
       <div id="${card.id}" class="card mb-4" style="width: 10rem;">
       <div class="aspect-ratio" style="aspect-ratio: 16/9;">
-          <img src="${card.img}" class="card-img-top img" alt="${card.name}">
+          <img src="${card.card_images[0].image_url_small}" class="card-img-top img" alt="${card.name}">
       </div>
       <h3>${card.type}</h3>
       <div class="card-body d-flex flex-column justify-content-between">
@@ -401,6 +394,82 @@ function showCardsAdv() {
         chosenCardAdv = card;
         console.log(chosenCard);
         selectCardAdv.innerHTML = `<h5>${card.name}</h5>`;
+      });
+    }
+  });
+}
+
+function showCards(copyMy) {
+  cards.innerHTML = "";
+  copyMy.forEach((card) => {
+    if (card.active == true) {
+      let cardElement = document.createElement("div");
+      cardElement.className = "col-2";
+      cardElement.innerHTML = `<div class="card mb-4">
+      <img src="${card.card_images[0].image_url_small}" class="card-img-top img-fluid" alt="${card.name}" style="height: 10rem; object-fit: cover;">
+      <div class="card-body ">
+          <h5 class="card-title">${card.name}</h5>
+          <p class="card-text">ATK: ${card.atk}</p>
+          <p class="card-text">DEF: ${card.def}</p>
+          <div class="row">
+              <div class="col-md-8">
+                  <button id="btnAtk${card.id}" class="btn btn-secondary w-100">Atk</button>
+              </div> 
+              <div class="col-md-8">    
+                  <button id="btnDef${card.id}" class="btn btn-secondary w-100">Def</button>
+              </div> 
+          </div>
+          <button id="myCard${card.id}" class="btn btn-primary mt-2">Elegir</button>
+      </div>
+  </div>
+  
+`;
+      cards.append(cardElement);
+
+      let btnAtk = document.getElementById(`btnAtk${card.id}`);
+      btnAtk.addEventListener("click", () => {
+        card.pos = "atk";
+        btnAtk.classList.add("btn-danger");
+        btnDef.classList.remove("btn-success");
+        console.log(copyMy);
+      });
+      let btnDef = document.getElementById(`btnDef${card.id}`);
+      btnDef.addEventListener("click", () => {
+        card.pos = "def";
+        btnAtk.classList.remove("btn-danger");
+        btnDef.classList.add("btn-success");
+        console.log(copyMy);
+      });
+      let btnChosen1 = document.getElementById(`myCard${card.id}`);
+      console.log(btnChosen1);
+      btnChosen1.addEventListener("click", () => {
+        chosenCard = card;
+
+        selectCard.innerHTML = `<h5>${card.name}</h5>`;
+      });
+    } else if (card.type == "magic" && card.active == true) {
+      let cardElement = document.createElement("div");
+      cardElement.className = "col-2";
+      cardElement.innerHTML = `
+      <div id="cardblue" class="card mb-4" style="width: 10rem;">
+      <img src="${card.img}" class="card-img-top img" alt="${card.name}" style="object-fit: cover; height: 150px;">
+      <h3>${card.type}</h3>
+      <div class="card-body">
+          <h5 class="card-title">${card.name}</h5>
+          <div class="col-12">
+              <button id="myCard${card.id}" class="btn btn-primary w-100">elegir</button>
+          </div>
+      </div>
+  </div>
+  
+  `;
+      cards.append(cardElement);
+      let btnChosen1 = document.getElementById(`myCard${card.id}`);
+      console.log(btnChosen1);
+      btnChosen1.addEventListener("click", () => {
+        chosenCard = card;
+
+        selectCard.innerHTML = `<h5>${card.name}</h5>`;
       });
     }
   });
@@ -445,91 +514,6 @@ jugar.addEventListener("click", () => {
     },
   });
 });
-
-showCardsAdv();
-
-function showCards() {
-  cards.innerHTML = "";
-  copyMy.forEach((card) => {
-    if (card.type == "monster" && card.active == true) {
-      let cardElement = document.createElement("div");
-      cardElement.className = "col-2";
-      cardElement.innerHTML = `<div class="card mb-4">
-      <img src="${card.img}" class="card-img-top img-fluid" alt="${card.name}" style="height: 10rem; object-fit: cover;">
-      <div class="card-body ">
-          <h5 class="card-title">${card.name}</h5>
-          <p class="card-text">ATK: ${card.atk}</p>
-          <p class="card-text">DEF: ${card.def}</p>
-          <div class="row">
-              <div class="col-md-8">
-                  <button id="btnAtk${card.id}" class="btn btn-secondary w-100">Atk</button>
-              </div> 
-              <div class="col-md-8">    
-                  <button id="btnDef${card.id}" class="btn btn-secondary w-100">Def</button>
-              </div> 
-          </div>
-          <button id="myCard${card.id}" class="btn btn-primary mt-2">Elegir</button>
-      </div>
-  </div>
-  
-`;
-      cards.append(cardElement);
-
-      let btnAtk = document.getElementById(`btnAtk${card.id}`);
-      btnAtk.addEventListener("click", () => {
-        if (card.type == "monster") {
-          card.pos = "atk";
-          btnAtk.classList.add("btn-danger");
-          btnDef.classList.remove("btn-success");
-          console.log(copyMy);
-        }
-      });
-      let btnDef = document.getElementById(`btnDef${card.id}`);
-      btnDef.addEventListener("click", () => {
-        if (card.type == "monster") {
-          card.pos = "def";
-          btnAtk.classList.remove("btn-danger");
-          btnDef.classList.add("btn-success");
-          console.log(copyMy);
-        }
-      });
-      let btnChosen1 = document.getElementById(`myCard${card.id}`);
-      console.log(btnChosen1);
-      btnChosen1.addEventListener("click", () => {
-        chosenCard = card;
-
-        selectCard.innerHTML = `<h5>${card.name}</h5>`;
-      });
-    } else if (card.type == "magic" && card.active == true) {
-      let cardElement = document.createElement("div");
-      cardElement.className = "col-2";
-      cardElement.innerHTML = `
-      <div id="cardblue" class="card mb-4" style="width: 10rem;">
-      <img src="${card.img}" class="card-img-top img" alt="${card.name}" style="object-fit: cover; height: 150px;">
-      <h3>${card.type}</h3>
-      <div class="card-body">
-          <h5 class="card-title">${card.name}</h5>
-          <div class="col-12">
-              <button id="myCard${card.id}" class="btn btn-primary w-100">elegir</button>
-          </div>
-      </div>
-  </div>
-  
-  `;
-      cards.append(cardElement);
-      let btnChosen1 = document.getElementById(`myCard${card.id}`);
-      console.log(btnChosen1);
-      btnChosen1.addEventListener("click", () => {
-        chosenCard = card;
-
-        selectCard.innerHTML = `<h5>${card.name}</h5>`;
-      });
-    }
-  });
-}
-
-showCards();
-
 let pointAdv = document.createElement("div");
 pointAdv.innerHTML = `<p>${adversaryLifeP}</p>`;
 lifePAdv.append(pointAdv);
@@ -590,8 +574,8 @@ function atacar() {
 
 btn_atacar.addEventListener("click", () => {
   atacar();
-  showCards();
-  showCardsAdv();
+  showCards(copyMy);
+  showCardsAdv(copyAdv);
 });
 
 let principal = document.createElement("div");
