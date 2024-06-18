@@ -1,19 +1,16 @@
-const titulo = document.getElementById("titulo");
 const lifeP = document.getElementById("life-point");
 const lifePAdv = document.getElementById("life-pointAd");
 const selectCardAdv = document.getElementById("selectCardAdv");
 const selectCard = document.getElementById("selectCard");
 const btn_atacar = document.getElementById("btn_atacar");
-// const resultado = document.getElementById("resultado");
 const salir = document.getElementById("salir");
-const container = document.querySelector(".container");
+const container = document.querySelector(".container-fluid");
 const jugar = document.getElementById("jugar");
 const jugarNone = document.querySelector(".jugar-none");
-
 const cardsAd = document.getElementById("card-row-ad");
 const cards = document.getElementById("card-row");
-
-//////////L.P///////
+const final = document.getElementById("final");
+const gano = document.getElementById("gano");
 
 let MyLifeP = 5000;
 let adversaryLifeP = 5000;
@@ -24,7 +21,6 @@ let verificacion = "";
 let verificacion2 = "";
 let nombre = "";
 
-//////CARTAS////
 let adversaryCards = [
   {
     id: 1,
@@ -274,7 +270,7 @@ async function getApiCards() {
       "https://db.ygoprodeck.com/api/v7/cardinfo.php"
     );
     const data = await response.json();
-    console.log(data);
+
     return data.data;
   } catch (error) {
     console.error("Error fetching data:", error);
@@ -287,7 +283,14 @@ let copyMy = [];
 async function showGame() {
   const cards = await getApiCards();
 
-  cards.forEach((card) => (card.active = null));
+  cards.forEach(
+    (card) => (
+      (card.active = null),
+      (card.position = null),
+      (card.id +=
+        "p" + cards.findIndex((otherCard) => otherCard.id === card.id))
+    )
+  );
 
   const filteredCards = cards.filter(
     (carta) => carta.type !== "Spell Card" && carta.type !== "Trap Card"
@@ -295,20 +298,14 @@ async function showGame() {
   adversaryCards = await filteredCards.slice(0, 50);
   myCards = await filteredCards.slice(50, 100);
 
-  console.log(myCards);
-  console.log(adversaryCards);
   copyAdv = shuffle(adversaryCards).slice(0, 5);
   copyMy = shuffle(myCards).slice(0, 5);
-
-  console.log(copyMy);
-  console.log(copyAdv);
 
   showCardsAdv(copyAdv);
   showCards(copyMy);
 }
 
 showGame();
-// Limitar a los primeros 10 elementos después de filtrar
 
 /////mezclar/////
 function shuffle(array) {
@@ -340,60 +337,17 @@ function showCardsAdv(copyAdv) {
       cardElementAdv.className = "col-2";
       cardElementAdv.dataset.type = card.type;
 
-      cardElementAdv.innerHTML = ` 
-  <div id="${card.id}" class="card mb-4" style="width: 10rem;">
-  <div class="aspect-ratio" style="aspect-ratio: 16/9;">
-      <img src="${card.card_images[0].image_url_small}" class="card-img-top img" alt="${card.name}">
-  </div>
-  <div class="card-body d-flex flex-column justify-content-between">
-      <h5 class="card-title">${card.name}</h5>
-      <p class="card-text">ATK: ${card.atk}</p>
-      <p class="card-text">DEF: ${card.def}</p>
-      <div class="col-12">
-          <button id="elegir${card.id}" class="btn btn-primary w-100">elegir</button>
-      </div>
-  </div>
-</div>
-`;
+      cardElementAdv.innerHTML = `<div id="elegir${card.id}" class =" card-yugi "> <img src="images/back-card.jpg" class="img img-fluid h-100" alt=""> </div>`;
+
       cardsAd.append(cardElementAdv);
-      console.log(cardElementAdv.dataset);
+
       cardElementsAdv.push(cardElementAdv);
 
       let btnChosenAdv = document.getElementById(`elegir${card.id}`);
       btnChosenAdv.addEventListener("click", () => {
         chosenCardAdv = card;
-        console.log(chosenCard);
-        selectCardAdv.innerHTML = `<h5>${card.name}</h5>`;
-      });
-    } else if (card.type == "magic" && card.active == true) {
-      let cardElementAdv = document.createElement("div");
-      cardElementAdv.className = "col-2";
-      cardElementAdv.dataset.type = card.type;
-      cardElementAdv.innerHTML = ` 
-      <div id="${card.id}" class="card mb-4" style="width: 10rem;">
-      <div class="aspect-ratio" style="aspect-ratio: 16/9;">
-          <img src="${card.card_images[0].image_url_small}" class="card-img-top img" alt="${card.name}">
-      </div>
-      <h3>${card.type}</h3>
-      <div class="card-body d-flex flex-column justify-content-between">
-          <h5 class="card-title">${card.name}</h5>
-          <p </p>
-          <p </p>
-          <div class="col-12">
-              <button id="elegir${card.id}" class="btn btn-primary w-100">elegir</button>
-          </div>
-      </div>
-  </div>
-  `;
-      cardsAd.append(cardElementAdv);
-      console.log(cardElementAdv.dataset);
-      cardElementsAdv.push(cardElementAdv);
 
-      let btnChosenAdv = document.getElementById(`elegir${card.id}`);
-      btnChosenAdv.addEventListener("click", () => {
-        chosenCardAdv = card;
-        console.log(chosenCard);
-        selectCardAdv.innerHTML = `<h5>${card.name}</h5>`;
+        selectCardAdv.innerHTML = `<img src="${"../images/back-card.jpg"}" class="card-img-top img" alt="incognito">`;
       });
     }
   });
@@ -404,80 +358,61 @@ function showCards(copyMy) {
   copyMy.forEach((card) => {
     if (card.active == true) {
       let cardElement = document.createElement("div");
-      cardElement.className = "col-2";
-      cardElement.innerHTML = `<div class="card mb-4">
-      <img src="${card.card_images[0].image_url_small}" class="card-img-top img-fluid" alt="${card.name}" style="height: 10rem; object-fit: cover;">
-      <div class="card-body ">
-          <h5 class="card-title">${card.name}</h5>
-          <p class="card-text">ATK: ${card.atk}</p>
-          <p class="card-text">DEF: ${card.def}</p>
-          <div class="row">
-              <div class="col-md-8">
-                  <button id="btnAtk${card.id}" class="btn btn-secondary w-100">Atk</button>
-              </div> 
-              <div class="col-md-8">    
-                  <button id="btnDef${card.id}" class="btn btn-secondary w-100">Def</button>
-              </div> 
-          </div>
-          <button id="myCard${card.id}" class="btn btn-primary mt-2">Elegir</button>
-      </div>
-  </div>
-  
-`;
-      cards.append(cardElement);
 
-      let btnAtk = document.getElementById(`btnAtk${card.id}`);
-      btnAtk.addEventListener("click", () => {
-        card.pos = "atk";
-        btnAtk.classList.add("btn-danger");
-        btnDef.classList.remove("btn-success");
-        console.log(copyMy);
-      });
-      let btnDef = document.getElementById(`btnDef${card.id}`);
-      btnDef.addEventListener("click", () => {
-        card.pos = "def";
-        btnAtk.classList.remove("btn-danger");
-        btnDef.classList.add("btn-success");
-        console.log(copyMy);
-      });
-      let btnChosen1 = document.getElementById(`myCard${card.id}`);
-      console.log(btnChosen1);
-      btnChosen1.addEventListener("click", () => {
-        chosenCard = card;
+      let border =
+        card.position == null
+          ? "col-2 grayFilter border border-4 cada_card"
+          : card.position == "atk"
+          ? "col-2 border border-4 border-danger cada_card"
+          : card.position == "def"
+          ? "col-2 border border-4 border-success cada_card"
+          : "";
 
-        selectCard.innerHTML = `<h5>${card.name}</h5>`;
-      });
-    } else if (card.type == "magic" && card.active == true) {
-      let cardElement = document.createElement("div");
-      cardElement.className = "col-2";
-      cardElement.innerHTML = `
-      <div id="cardblue" class="card mb-4" style="width: 10rem;">
-      <img src="${card.img}" class="card-img-top img" alt="${card.name}" style="object-fit: cover; height: 150px;">
-      <h3>${card.type}</h3>
-      <div class="card-body">
-          <h5 class="card-title">${card.name}</h5>
-          <div class="col-12">
-              <button id="myCard${card.id}" class="btn btn-primary w-100">elegir</button>
-          </div>
+      cardElement.className = border;
+
+      cardElement.innerHTML = `<div id="myCard${card.id}" class="row">   <img
+              class="image img-fluid yugi-img p-0"
+              src="${card.card_images[0].image_url}"
+              alt=""/> 
       </div>
-  </div>
-  
+
   `;
       cards.append(cardElement);
-      let btnChosen1 = document.getElementById(`myCard${card.id}`);
-      console.log(btnChosen1);
-      btnChosen1.addEventListener("click", () => {
-        chosenCard = card;
+      const cada_card = document.querySelector(`#myCard${card.id}`);
 
-        selectCard.innerHTML = `<h5>${card.name}</h5>`;
+      const positionCard = () => {
+        cada_card.addEventListener("contextmenu", (e) => {
+          e.preventDefault();
+          if (card.position == null) {
+            card.position = "atk";
+            cardElement.classList.remove("grayFilter");
+            cardElement.classList.add("border-danger");
+          } else if (card.position == "atk") {
+            card.position = "def";
+            cardElement.classList.remove("grayFilter");
+            cardElement.classList.remove("border-danger");
+            cardElement.classList.add("border-success");
+          } else if (card.position == "def") {
+            card.position = "atk";
+            cardElement.classList.remove("grayFilter");
+            cardElement.classList.add("border-danger");
+            cardElement.classList.remove("border-success");
+          }
+        });
+      };
+      positionCard();
+
+      cada_card.addEventListener("click", () => {
+        // positionCard();
+        card.position == null
+          ? alert("elegi pos")
+          : ((chosenCard = card),
+            (selectCard.innerHTML = `<img src="${card.card_images[0].image_url}" class="card-img-top img" alt="incognito"><h6 class="fw-semibold m-0 text-center mt-3">${card.position}</h6>`));
       });
     }
   });
 }
-
-jugar.addEventListener("click", () => {
-  container.classList.toggle("none");
-  jugarNone.classList.toggle("none");
+const user = () => {
   Swal.fire({
     title: "Cuál es tu nombre",
     input: "text",
@@ -501,11 +436,10 @@ jugar.addEventListener("click", () => {
 
       confirmButton.addEventListener("click", () => {
         const nombre = localStorage.getItem("nombreUsuario");
-        // Verifica si nombre existe en el localStorage
+
         if (nombre) {
           lifeP.innerHTML = `Los Life Point de ${nombre}:<p>${MyLifeP}</p>`;
         } else {
-          // Si no hay nombre en el localStorage, muestra un mensaje
           console.error(
             "El nombre de usuario no se encuentra en el localStorage"
           );
@@ -513,61 +447,83 @@ jugar.addEventListener("click", () => {
       });
     },
   });
+};
+jugar.addEventListener("click", () => {
+  container.classList.toggle("d-none");
+  jugarNone.classList.add("d-none");
+  jugarNone.classList.remove("d-flex");
+  user();
 });
+
 let pointAdv = document.createElement("div");
 pointAdv.innerHTML = `<p>${adversaryLifeP}</p>`;
 lifePAdv.append(pointAdv);
 
 function atacar() {
-  if (chosenCard.pos == "atk") {
-    if (chosenCard.atk > chosenCardAdv.atk && adversaryLifeP > 0) {
+  if (chosenCard.position == "atk") {
+    if (chosenCard.atk > chosenCardAdv.atk) {
       Toastify({
-        text: "tu carta le gano a la carta del adversario",
+        text: "Tu carta le ganó a la carta del adversario",
         duration: 3000,
+        position: "right",
+        style: {
+          background:
+            "linear-gradient(109.6deg, rgba(249,21,215,1) 1.1%, rgba(22,0,98,1) 99%)",
+        },
       }).showToast();
       verificacion = chosenCard.atk - chosenCardAdv.atk;
-      adversaryLifeP = adversaryLifeP - verificacion;
+      adversaryLifeP -= verificacion;
       pointAdv.innerHTML = `<p>${adversaryLifeP}</p>`;
       lifePAdv.append(pointAdv);
-    } else if (chosenCard.atk < chosenCardAdv.atk && MyLifeP > 0) {
+    } else if (chosenCard.atk < chosenCardAdv.atk) {
       Toastify({
-        text: "tu carta no le gano a la carta del adversario",
+        text: "Tu carta no le ganó a la carta del adversario",
         duration: 3000,
+        position: "right",
+        style: {
+          background:
+            "linear-gradient(109.6deg, rgba(249,21,215,1) 1.1%, rgba(22,0,98,1) 99%)",
+        },
       }).showToast();
       verificacion2 = chosenCardAdv.atk - chosenCard.atk;
-      MyLifeP = MyLifeP - verificacion2;
-      lifeP.innerHTML = `Los Life Point de ${nombre}:<p>${MyLifeP}</p>`;
-      console.log(verificacion2);
-      console.log(MyLifeP);
-    } else if (chosenCard.atk == chosenCardAdv.atk) {
-      Toastify({
-        text: "empataron",
-        duration: 3000,
-      }).showToast();
-    } else if (chosenCard.atk > chosenCardAdv.atk && adversaryLifeP < 0) {
-      Toastify({
-        text: `ya se termino el juego gano ${nombre}`,
-        duration: 3000,
-      }).showToast();
-      window.location.href = "final.html";
-    } else if (chosenCard.atk < chosenCardAdv.atk && MyLifeP < 0) {
-      Toastify({
-        text: `ya se termino el juego gano el adversario`,
-        duration: 3000,
-      }).showToast();
-      window.location.href = "final.html";
+      MyLifeP -= verificacion2;
+      lifeP.innerHTML = `Los Life Points de ${nombre}:<p>${MyLifeP}</p>`;
     } else {
       Toastify({
-        text: `tu carta esta en modo defensa`,
+        text: "Empataron",
         duration: 3000,
+        position: "right",
+        style: {
+          background:
+            "linear-gradient(109.6deg, rgba(249,21,215,1) 1.1%, rgba(22,0,98,1) 99%)",
+        },
       }).showToast();
     }
+
     chosenCard.active = false;
     chosenCardAdv.active = false;
+
+    chosenCard = null;
+    chosenCardAdv = null;
+
+    selectCard.innerHTML = `<p class="fw-semibold m-0 text-center mt-3">seleccione una carta</p>`;
+    selectCardAdv.innerHTML = `<p class="fw-semibold m-0 text-center mt-3">seleccione una carta</p>`;
+
+    if (
+      copyAdv.filter((card) => card.active == true).length == 0 ||
+      copyMy.filter((card) => card.active == true).length == 0
+    ) {
+      alert("termino el juego");
+    } else if (adversaryLifeP <= 0) {
+      Swal.fire(`Fin del juego gano el adversario`);
+    } else if (MyLifeP <= 0) {
+      Swal.fire(`Fin del juego gano ${nombre}`);
+    }
   } else {
     Toastify({
-      text: `tu carta esta en modo defensa`,
+      text: "Tu carta está en modo defensa",
       duration: 3000,
+      position: "right",
     }).showToast();
   }
 }
@@ -578,12 +534,63 @@ btn_atacar.addEventListener("click", () => {
   showCardsAdv(copyAdv);
 });
 
-let principal = document.createElement("div");
-principal.innerHTML = `<h2> Juego de cartas</h2> <p>Este es un juego de cartas al estilo de YU-GI-OH. Los Life Points (LP) de cada uno son de 5000. Tú tendrás 3 cartas monstruo al igual que tu adversario.</p>`;
-titulo.append(principal);
-
 salir.addEventListener("click", () => {
-  jugarNone.classList.toggle("none");
-  container.classList.toggle("none");
+  jugarNone.classList.toggle("d-none");
+  container.classList.toggle("d-none");
   localStorage.clear();
+  showGame();
 });
+///////
+
+// volver.addEventListener("click", () => {
+//   // window.location.href = "index.html";
+//   alert("volver");
+// });
+
+// if (
+//   adversaryLifeP <= 0 ||
+//   chosenCard.active == false ||
+//   chosenCardAdv.active == false
+// ) {
+//   gano.innerHTML = `${nombre}`;
+// } else if (
+//   MyLifeP <= 0 ||
+//   chosenCard.active == false ||
+//   chosenCardAdv.active == false
+// ) {
+//   gano.innerHTML = ` el adversario`;
+// }
+
+// const volver = document.getElementById("volver");
+// const gano = document.getElementById("gano");
+
+// volver.addEventListener("click", () => {
+//   window.location.href = "index.html";
+// });
+
+// if (
+//   adversaryLifeP <= 0 ||
+//   chosenCard.active == false ||
+//   chosenCardAdv.active == false
+// ) {
+//   gano.innerHTML = `${nombre}`;
+// } else if (
+//   MyLifeP <= 0 ||
+//   chosenCard.active == false ||
+//   chosenCardAdv.active == false
+// ) {
+//   gano.innerHTML = ` el adversario`;
+// }
+// if (
+//   adversaryLifeP <= 0 ||
+//   chosenCard.active == false ||
+//   chosenCardAdv.active == false
+// ) {
+//   gano.innerHTML = `${nombre}`;
+// } else if (
+//   MyLifeP <= 0 ||
+//   chosenCard.active == false ||
+//   chosenCardAdv.active == false
+// ) {
+//   gano.innerHTML = ` el adversario`;
+// }

@@ -21,40 +21,71 @@
     <link rel="stylesheet" href="css/style.css" />
     <title>Document</title>
   </head>
-  <body class="d-flex justify-content-center align-items-center">
-    <div id="jugar" class="jugar-none">
-      <span class="material-symbols-outlined">play_circle</span>
-      <button id="">empezar a jugar</button>
+  <body class="d-flex justify-content-center align-items-center font-monospace">
+    <div id="jugar" class="jugar-none rounded d-flex flex-column px-5">
+      <div class="d-flex align-items-center flex-column text-white">
+        <h1 class="fw-bold my-4">Como se juega:</h1>
+        <h4 class="my-1">Es un simulador al juego de yu-gi-oh</h4>
+        <h5>Los Life Points (LP) de cada uno son de 5000.</h5>
+        <h5>Tú tendrás 5 cartas monstruo al igual que tu adversario.</h5>
+        <ul class="mt-4">
+          <li>click izquierdo : modo ataque(color rojo)</li>
+          <li>click izquierdo : modo defensa(color verde)</li>
+          <li>Selecciona tu carta</li>
+          <li>Selecciona la carta del adversario que deceas atacar</li>
+          <li>click al boton atacar</li>
+          <li>Divertite</li>
+        </ul>
+      </div>
+
+      <button class="btn-jugar rounded row flex-column mb-4 p-1">
+        Empezar a jugar
+        <span class="material-symbols-outlined col-12">play_circle</span>
+      </button>
     </div>
 
-    <div class="container bg-warnig none">
+    <div class="container-fluid vh-100 d-none">
       <div class="row">
         <div class="col-12 d-flex flex-column align-items-center"></div>
       </div>
-      <div id="titulo"></div>
-      <div class="row bg-danger">
-        <div class="col-10 bg-primary d-flex flex-column">
-          <!-- <h1 id="resultado">Resultado de la batalla</h1> -->
-          <h2>Las cartas del oponente son:</h2>
+
+      <div class="row">
+        <div class="col-11 campo d-flex flex-column">
+          <h2 class="text-center text-white">Las cartas del oponente son:</h2>
           <div
-            class="row flex-row justify-content-between"
+            class="row flex-row justify-content-evenly"
             id="card-row-ad"
           ></div>
-          <h2>Tus cartas son:</h2>
-          <div id="card-row" class="row flex-row justify-content-between"></div>
+          <h2 class="text-center text-white">Tus cartas son:</h2>
+          <div id="card-row" class="row flex-row justify-content-evenly"></div>
         </div>
         <div
-          class="col-2 bg-warnig d-flex flex-column align-items-stretch justify-content-around"
+          class="col-1 aside rounded text-white d-flex flex-column align-items-center justify-content-around"
         >
-          <h3 id="life-pointAd">Life Point Adversario:</h3>
-          <h5 id="selectCardAdv">elegiste a (Adversario)</h5>
-          <button id="btn_atacar" class="btn btn-primary col-4">Atacar</button>
-          <h5 id="selectCard">elegiste a (tuyo)</h5>
-          <h3 id="life-point"></h3>
-          <button id="salir">salir</button>
+          <h5 id="life-pointAd">Life Point Adversario:</h5>
+          <h5 id="selectCardAdv" class="fw-semibold m-0 text-center mt-3">
+            seleccione una carta
+          </h5>
+          <button
+            id="btn_atacar"
+            class="btn col-7 rounded d-flex btn_atacar flex-column align-items-center text-black"
+          >
+            Atacar
+          </button>
+          <h5 id="selectCard" class="fw-semibold m-0 text-center mt-3">
+            seleccione una carta
+          </h5>
+          <h5 id="life-point"></h5>
+          <button
+            id="salir"
+            class="btn col-7 d-flex rounded flex-column align-items-center btn_atacar text-black"
+          >
+            salir
+          </button>
         </div>
       </div>
     </div>
+
     <script
       type="text/javascript"
       src="https://cdn.jsdelivr.net/npm/toastify-js"

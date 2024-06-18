@@ -1,6 +1,17 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 html,
 body {
   height: 100%;
+  background-image: linear-gradient(
+    109.6deg,
+    rgba(102, 51, 153, 1) 11.2%,
+    rgba(2, 0, 4, 1) 91.1%
+  );
 }
 
 .jugar-none {
@@ -8,44 +19,83 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh;
+  background: #686d7652;
 }
-.red {
-  background: red;
+.btn-jugar {
+  background: #dc5f00;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
 }
-
-.img {
-  width: 155px;
-  height: 155px;
-  object-fit: cover;
+.material-symbols-outlined {
+  font-size: 40px;
 }
-.none {
-  display: none;
+div:where(.swal2-container).swal2-center > .swal2-popup {
+  background: #373a40;
+  color: #eee;
 }
-.flex {
-  display: flex;
+div:where(.swal2-container) button:where(.swal2-styled).swal2-confirm {
+  background-color: #dc5f00 !important;
 }
-/* /////////// */
-*{
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+.campo {
+  background-image: linear-gradient(
+    109.6deg,
+    rgba(102, 51, 153, 1) 11.2%,
+    rgba(2, 0, 4, 1) 91.1%
+  );
 }
-h1{
+.aside {
+  background: #373a40;
+}
+.btn_atacar {
+  background: #dc5f00;
+  font-size: 20px;
+  font-weight: bold;
+}
+/* h1 {
   text-align: center;
-}
-main{
+} */
+main {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  gap: 18px
+  gap: 18px;
 }
-.imagen-container{
+.imagen-container {
   display: flex;
 }
-.imagen-container img{
+.imagen-container img {
   width: 100%;
 }
-article{
+article {
   padding: 10px;
   box-shadow: 0px 0px 1px #000;
 }
+
+.grayFilter {
+  filter: grayscale(1);
+}
+/* ///////// */
+.card-yugi {
+  width: 260px;
+  height: 380px;
+  cursor: pointer;
+  /* background-image: url("../images/Normal.png");
+  background-size: cover;
+  background-position: center; */
+  & h6 {
+    line-height: 22px;
+  }
+  & .star-card {
+    height: 20px;
+  }
+}
+.font-card-yugi {
+  font-size: 5px;
+}
+/* .yugi-img {
+  height: 171px;
+} */
+.yugi-desc {
+  height: 40px;
+}
+/* ///////// */
