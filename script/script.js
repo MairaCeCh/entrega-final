@@ -122,20 +122,6 @@ let adversaryCards = [
     effect: null,
     img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrIIajwbxhEnZcY5XlRF32sq4IDLmQN9bvHg&s",
   },
-  {
-    id: 11,
-    name: "Molten Phoenix",
-    type: "magic",
-    effect: "Incrementa 1000 a tus LP",
-    img: "https://m.media-amazon.com/images/I/61Qe9gpgCJL._AC_UF894,1000_QL80_.jpg",
-  },
-  {
-    id: 12,
-    name: "Venomous Serpent",
-    type: "magic",
-    effect: "Resta 1000 a los LP de tu adversario",
-    img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQxSO-JQZ1Som0NSPnze7cOUHYU5bnyTdixGA&s",
-  },
 ];
 let myCards = [
   {
@@ -238,30 +224,6 @@ let myCards = [
     effect: null,
     img: "https://i.pinimg.com/736x/62/c2/4e/62c24ebd2de6f923faa920fc8697575a.jpg",
   },
-  {
-    id: 11,
-    name: "Molten Phoenix",
-    type: "magic",
-    effect: "incrementa 1000 a tus LP ",
-    img: "https://m.media-amazon.com/images/I/61Qe9gpgCJL._AC_UF894,1000_QL80_.jpg",
-    magic: function () {
-      MyLifeP += 1000;
-      alert("tus L.P. son" + MyLifeP);
-    },
-    pos: null,
-  },
-  {
-    id: 12,
-    name: "Venomous Serpent",
-    type: "magic",
-    effect: "Resta 1000 a los LP de tu adversario",
-    img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQxSO-JQZ1Som0NSPnze7cOUHYU5bnyTdixGA&s",
-    magic: function () {
-      adversaryLifeP -= 1000;
-      alert(`los L.p. de tu adversario son ${adversaryLifeP}`);
-    },
-    pos: null,
-  },
 ];
 
 async function getApiCards() {
@@ -334,10 +296,10 @@ function showCardsAdv(copyAdv) {
   copyAdv.forEach((card) => {
     if (card.active == true) {
       let cardElementAdv = document.createElement("div");
-      cardElementAdv.className = "col-2";
+      cardElementAdv.className = "col-2 ";
       cardElementAdv.dataset.type = card.type;
 
-      cardElementAdv.innerHTML = `<div id="elegir${card.id}" class =" card-yugi "> <img src="images/back-card.jpg" class="img img-fluid h-100" alt=""> </div>`;
+      cardElementAdv.innerHTML = `<div id="elegir${card.id}" class ="row "> <img src="images/back-card.jpg" class="image img-fluid p-0 " alt=""> </div>`;
 
       cardsAd.append(cardElementAdv);
 
@@ -371,7 +333,7 @@ function showCards(copyMy) {
       cardElement.className = border;
 
       cardElement.innerHTML = `<div id="myCard${card.id}" class="row">   <img
-              class="image img-fluid yugi-img p-0"
+              class="image img-fluid p-0"
               src="${card.card_images[0].image_url}"
               alt=""/> 
       </div>
@@ -403,9 +365,8 @@ function showCards(copyMy) {
       positionCard();
 
       cada_card.addEventListener("click", () => {
-        // positionCard();
         card.position == null
-          ? alert("elegi pos")
+          ? Swal.fire("elegir la posicion de la carta!")
           : ((chosenCard = card),
             (selectCard.innerHTML = `<img src="${card.card_images[0].image_url}" class="card-img-top img" alt="incognito"><h6 class="fw-semibold m-0 text-center mt-3">${card.position}</h6>`));
       });
@@ -419,17 +380,21 @@ const user = () => {
     inputAttributes: {
       autocapitalize: "off",
     },
-    showCancelButton: true,
+    showCancelButton: false,
     confirmButtonText: "Aceptar",
     showLoaderOnConfirm: true,
+    allowOutsideClick: false,
     preConfirm: async (nombre) => {
+      if (!nombre) {
+        Swal.showValidationMessage("El nombre no puede estar vacío");
+        return false;
+      }
       try {
         localStorage.setItem("nombreUsuario", nombre);
       } catch (error) {
         Swal.showValidationMessage(`Error: ${error}`);
       }
     },
-    allowOutsideClick: () => !Swal.isLoading(),
     didOpen: () => {
       const confirmButton = Swal.getConfirmButton();
       confirmButton.classList.add("aceptar");
@@ -456,10 +421,13 @@ jugar.addEventListener("click", () => {
 });
 
 let pointAdv = document.createElement("div");
-pointAdv.innerHTML = `<p>${adversaryLifeP}</p>`;
+// pointAdv.innerHTML = `
+// <p>${adversaryLifeP}</p>
+// `;
 lifePAdv.append(pointAdv);
 
 function atacar() {
+  nombre = localStorage.getItem("nombreUsuario");
   if (chosenCard.position == "atk") {
     if (chosenCard.atk > chosenCardAdv.atk) {
       Toastify({
@@ -474,7 +442,8 @@ function atacar() {
       verificacion = chosenCard.atk - chosenCardAdv.atk;
       adversaryLifeP -= verificacion;
       pointAdv.innerHTML = `<p>${adversaryLifeP}</p>`;
-      lifePAdv.append(pointAdv);
+      lifePAdv.innerHTML = `Los Life Point del adversario: <p>${adversaryLifeP}</p>`;
+      // lifePAdv.append(pointAdv);
     } else if (chosenCard.atk < chosenCardAdv.atk) {
       Toastify({
         text: "Tu carta no le ganó a la carta del adversario",
@@ -513,11 +482,20 @@ function atacar() {
       copyAdv.filter((card) => card.active == true).length == 0 ||
       copyMy.filter((card) => card.active == true).length == 0
     ) {
-      alert("termino el juego");
+      Swal.fire(
+        `Fin del juego.\n Los LP de tu adversario fueron de ${adversaryLifeP}. \n Y los LP de ${nombre}: ${MyLifeP}`
+      );
+      end();
     } else if (adversaryLifeP <= 0) {
-      Swal.fire(`Fin del juego gano el adversario`);
+      Swal.fire(
+        `Fin del juego. \n Los LP de tu adversario fueron de ${adversaryLifeP}. \n Y los LP de ${nombre}: ${MyLifeP}.\nGano el adversario`
+      );
+      end();
     } else if (MyLifeP <= 0) {
-      Swal.fire(`Fin del juego gano ${nombre}`);
+      Swal.fire(
+        `Fin del juego. \n Los LP de tu adversario fueron de ${adversaryLifeP}. \n Y los LP de ${nombre}: ${MyLifeP}.\nGano ${nombre}`
+      );
+      end();
     }
   } else {
     Toastify({
@@ -533,64 +511,16 @@ btn_atacar.addEventListener("click", () => {
   showCards(copyMy);
   showCardsAdv(copyAdv);
 });
-
-salir.addEventListener("click", () => {
+const end = () => {
+  MyLifeP = 5000;
+  adversaryLifeP = 5000;
+  lifeP.innerHTML = `Los Life Point de ${nombre}: <p>${MyLifeP}</p>`;
+  lifePAdv.innerHTML = `Los Life Point del adversario: <p>${adversaryLifeP}</p>`;
   jugarNone.classList.toggle("d-none");
   container.classList.toggle("d-none");
   localStorage.clear();
   showGame();
+};
+salir.addEventListener("click", () => {
+  end();
 });
-///////
-
-// volver.addEventListener("click", () => {
-//   // window.location.href = "index.html";
-//   alert("volver");
-// });
-
-// if (
-//   adversaryLifeP <= 0 ||
-//   chosenCard.active == false ||
-//   chosenCardAdv.active == false
-// ) {
-//   gano.innerHTML = `${nombre}`;
-// } else if (
-//   MyLifeP <= 0 ||
-//   chosenCard.active == false ||
-//   chosenCardAdv.active == false
-// ) {
-//   gano.innerHTML = ` el adversario`;
-// }
-
-// const volver = document.getElementById("volver");
-// const gano = document.getElementById("gano");
-
-// volver.addEventListener("click", () => {
-//   window.location.href = "index.html";
-// });
-
-// if (
-//   adversaryLifeP <= 0 ||
-//   chosenCard.active == false ||
-//   chosenCardAdv.active == false
-// ) {
-//   gano.innerHTML = `${nombre}`;
-// } else if (
-//   MyLifeP <= 0 ||
-//   chosenCard.active == false ||
-//   chosenCardAdv.active == false
-// ) {
-//   gano.innerHTML = ` el adversario`;
-// }
-// if (
-//   adversaryLifeP <= 0 ||
-//   chosenCard.active == false ||
-//   chosenCardAdv.active == false
-// ) {
-//   gano.innerHTML = `${nombre}`;
-// } else if (
-//   MyLifeP <= 0 ||
-//   chosenCard.active == false ||
-//   chosenCardAdv.active == false
-// ) {
-//   gano.innerHTML = ` el adversario`;
-// }

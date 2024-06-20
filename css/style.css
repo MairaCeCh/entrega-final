@@ -52,14 +52,12 @@ div:where(.swal2-container) button:where(.swal2-styled).swal2-confirm {
   font-size: 20px;
   font-weight: bold;
 }
-/* h1 {
-  text-align: center;
-} */
-main {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 18px;
+.btn_atacar:hover {
+  background: black;
+  color: #dc5f00;
+  border: 1px solid #dc5f00;
 }
+
 .imagen-container {
   display: flex;
 }
@@ -79,9 +77,7 @@ article {
   width: 260px;
   height: 380px;
   cursor: pointer;
-  /* background-image: url("../images/Normal.png");
-  background-size: cover;
-  background-position: center; */
+
   & h6 {
     line-height: 22px;
   }
@@ -92,10 +88,10 @@ article {
 .font-card-yugi {
   font-size: 5px;
 }
-/* .yugi-img {
-  height: 171px;
-} */
-.yugi-desc {
-  height: 40px;
+.card-adv {
+  width: 300px;
+  height: 300px;
 }
-/* ///////// */
+/* .yugi-desc {
+  height: 40px;
+} */
