@@ -421,9 +421,9 @@ jugar.addEventListener("click", () => {
 });
 
 let pointAdv = document.createElement("div");
-// pointAdv.innerHTML = `
-// <p>${adversaryLifeP}</p>
-// `;
+pointAdv.innerHTML = `
+<p>${adversaryLifeP}</p>
+`;
 lifePAdv.append(pointAdv);
 
 function atacar() {
